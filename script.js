@@ -5,38 +5,29 @@ const API_KEY = "78e0df47";
  * Movie class handles searching and fetching movie data from OMDb.
  */
 class Movie {
-  /**
-   * @param {string} title - The title of the movie to search.
-   */
   constructor(title) {
-    this.title = title; // Movie title to search
+    this.title = title; // The movie title to search
   }
 
-  /**
-   * Constructs the search URL using the movie title.
-   * @returns {string} URL to query OMDb for search results.
-   */
+  // Construct the search URL using the movie title
   get searchUrl() {
     return `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(
       this.title.trim()
     )}`;
   }
 
-  /**
-   * Static method to construct the URL to fetch movie details by IMDb ID.
-   * @param {string} imdbID - The IMDb ID of the movie.
-   * @returns {string} URL to query OMDb for full movie details.
-   */
+  // Static method to construct URL to fetch movie details by IMDb ID
   static getDetailsUrl(imdbID) {
     return `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}`;
   }
 
   /**
-   * Fetches movies by title.
-   * @param {function} callback - Called with movie results on success.
-   * @param {function} errorCallback - Called with error message on failure.
+   * Fetch movies by title.
+   * @param {Function} callback - Function called on successful fetch.
+   * @param {Function} errorCallback - Function called on failure.
    */
   fetchMovies(callback, errorCallback) {
+    // jQuery AJAX GET request to OMDb API to search movies
     $.ajax({
       url: this.searchUrl,
       method: "GET",
@@ -53,11 +44,12 @@ class Movie {
 
   /**
    * Static method to fetch full movie details by IMDb ID.
-   * @param {string} imdbID - The IMDb ID of the movie.
-   * @param {function} callback - Called with movie details on success.
-   * @param {function} errorCallback - Called with error message on failure.
+   * @param {string} imdbID - IMDb ID of the movie.
+   * @param {Function} callback - Called with movie details on success.
+   * @param {Function} errorCallback - Called with error message on failure.
    */
   static fetchDetails(imdbID, callback, errorCallback) {
+    // jQuery AJAX GET request to fetch movie details
     $.ajax({
       url: Movie.getDetailsUrl(imdbID),
       method: "GET",
@@ -77,17 +69,11 @@ class Movie {
  * MovieCard class handles the creation and rendering of individual movie cards.
  */
 class MovieCard {
-  /**
-   * @param {object} details - Movie details returned from OMDb.
-   */
   constructor(details) {
-    this.details = details; // Full movie details including title, poster, etc.
+    this.details = details; // Movie details object
   }
 
-  /**
-   * Determine the color for the IMDb rating badge.
-   * @returns {string} A hex color code representing the rating tier.
-   */
+  // Determine color based on IMDb rating
   getRatingColor() {
     const rating = parseFloat(this.details.imdbRating);
     if (isNaN(rating)) return "#888"; // Grey for missing rating
@@ -96,11 +82,9 @@ class MovieCard {
     return "#F44336"; // Red for poor
   }
 
-  /**
-   * Renders and returns a jQuery element for the movie card.
-   * @returns {jQuery} The rendered movie card element.
-   */
+  // Render and return a jQuery movie card element
   render() {
+    // Create a Bootstrap card using jQuery with movie data
     const card = $(`
       <div class="col-md-4 mb-4 d-flex justify-content-center">
         <div class="card movie-card" aria-label="${
@@ -171,45 +155,14 @@ class MovieApp {
       "The Wolf of Wall Street",
     ];
 
-    this.maxDisplay = 9;
+    this.maxDisplay = 9; // Max number of movie cards to show
 
-    this.setupEventListeners();
-    this.populateSuggestedMovies();
-    this.showDescription();
+    this.setupEventListeners(); // Attach event handlers
+    this.populateSuggestedMovies(); // Load suggestions
+    this.showDescription(); // Show default description
   }
 
-  /**
-   * Validates the user input for a movie title.
-   * @param {string} title - The user input title to validate.
-   * @returns {boolean} True if input is valid, false otherwise.
-   */
-  validateTitleInput(title) {
-    const trimmed = title.trim();
-
-    if (!trimmed) {
-      alert("Please enter a movie title.");
-      return false;
-    }
-
-    if (trimmed.length < 2 || trimmed.length > 100) {
-      alert("Movie title must be between 2 and 100 characters.");
-      return false;
-    }
-
-    const validPattern = /^[a-zA-Z0-9\s'":,\-!?()]+$/;
-    if (!validPattern.test(trimmed)) {
-      alert("Title contains invalid characters.");
-      return false;
-    }
-
-    return true;
-  }
-
-  /**
-   * Shuffles an array using the Fisher-Yates algorithm.
-   * @param {Array} array - The array to shuffle.
-   * @returns {Array} The shuffled array.
-   */
+  // Shuffle an array using Fisher-Yates algorithm
   shuffleArray(array) {
     const arr = array.slice();
     for (let i = arr.length - 1; i > 0; i--) {
@@ -219,64 +172,55 @@ class MovieApp {
     return arr;
   }
 
-  /**
-   * Populates the suggestion dropdown with random movie titles.
-   */
+  // Populate the dropdown with 10 random movie suggestions
   populateSuggestedMovies() {
     const shuffled = this.shuffleArray(this.movieSuggestionsPool);
     const suggestions = shuffled.slice(0, 10);
-    const $dropdown = $("#suggestedMovies");
-    $dropdown.empty().append('<option value="">Suggested Movies</option>');
+    const $dropdown = $("#suggestedMovies"); // jQuery: get dropdown
+    $dropdown.empty().append('<option value="">Suggested Movies</option>'); // Clear and reset
     suggestions.forEach((title) => {
-      $dropdown.append(`<option value="${title}">${title}</option>`);
+      $dropdown.append(`<option value="${title}">${title}</option>`); // Add suggestions
     });
   }
 
-  /**
-   * Displays the main description on the home page.
-   */
+  // Show the default description section
   showDescription() {
-    $("#pageDescription").fadeIn(400);
+    $("#pageDescription").fadeIn(400); // jQuery: fade in description
   }
 
-  /**
-   * Hides the main description when search results are shown.
-   */
+  // Hide the description when results are showing
   hideDescription() {
-    $("#pageDescription").fadeOut(400);
+    $("#pageDescription").fadeOut(400); // jQuery: fade out description
   }
 
-  /**
-   * Initiates search and rendering of movie cards based on the title.
-   * @param {string} title - The movie title to search for.
-   */
+  // Perform movie search and show results
   searchAndDisplayMovies(title) {
-    if (!this.validateTitleInput(title)) return;
+    if (!title) {
+      alert("Please enter a movie title."); // Basic input validation
+      return;
+    }
 
-    $("#movieCards").empty();
-    $("#loading").show();
-    this.hideDescription();
+    $("#movieCards").empty(); // Clear previous results
+    $("#loading").show(); // jQuery: show loading spinner
+    this.hideDescription(); // Hide default description
 
     const movieSearch = new Movie(title);
     movieSearch.fetchMovies(
-      (movies) => this.displayMovies(movies),
+      (movies) => this.displayMovies(movies), // On success
       (errorMessage) => {
         $("#movieCards").html(
-          `<p class="text-center text-danger" role="alert">${errorMessage}</p>`
+          `<p class="text-center text-danger" role="alert">${errorMessage}</p>` // jQuery: show error message
         );
-        $("#loading").hide();
-        this.showDescription();
+        $("#loading").hide(); // Hide loading
+        this.showDescription(); // Restore description
       }
     );
   }
 
-  /**
-   * Displays movie cards based on fetched results.
-   * @param {Array} movies - Array of movie search results from OMDb.
-   */
+  // Display up to 9 movie cards
   displayMovies(movies) {
-    $("#movieCards").empty();
-    $("#loading").show();
+    $("#movieCards").empty(); // Clear movie cards
+    $("#loading").show(); // Show loading
 
     const detailPromises = movies.map((movie) =>
       $.ajax({
@@ -307,17 +251,16 @@ class MovieApp {
         (detail) =>
           new Promise((resolve) => {
             const img = new Image();
-            img.onload = () => resolve(detail);
-            img.onerror = () => resolve(null);
+            img.onload = () => resolve(detail); // Load success
+            img.onerror = () => resolve(null); // Load failed
             img.src = detail.Poster;
           })
       );
 
       Promise.all(imageLoadPromises).then((loadedDetails) => {
         const loadedValidDetails = loadedDetails.filter((d) => d !== null);
-        const toDisplay = loadedValidDetails.slice(0, this.maxDisplay);
 
-        if (toDisplay.length === 0) {
+        if (loadedValidDetails.length === 0) {
           $("#movieCards").html(
             `<p class="text-center text-warning mt-3" role="alert">No valid posters could be loaded.</p>`
           );
@@ -326,9 +269,10 @@ class MovieApp {
           return;
         }
 
+        const toDisplay = loadedValidDetails.slice(0, this.maxDisplay);
         toDisplay.forEach((detail) => {
           const card = new MovieCard(detail).render();
-          $("#movieCards").append(card);
+          $("#movieCards").append(card); // Add card to page
         });
 
         if (toDisplay.length < this.maxDisplay) {
@@ -337,45 +281,47 @@ class MovieApp {
           );
         }
 
-        $("#loading").hide();
+        $("#loading").hide(); // Hide loading
       });
     });
   }
 
-  /**
-   * Sets up event listeners for user interactions.
-   */
+  // Set up all DOM event listeners
   setupEventListeners() {
     $(document).ready(() => {
+      // On dropdown focus or click, repopulate suggestions
       $("#suggestedMovies").on("focus click", () =>
         this.populateSuggestedMovies()
       );
 
+      // On search button click, trigger movie search
       $("#searchBtn").on("click", () => {
-        const title = $("#movieInput").val().trim();
-        this.searchAndDisplayMovies(title);
+        const title = $("#movieInput").val().trim(); // Get input
+        this.searchAndDisplayMovies(title); // Search
       });
 
+      // Trigger search on Enter key
       $("#movieInput").on("keydown", (event) => {
         if (event.key === "Enter") {
-          $("#searchBtn").click();
+          $("#searchBtn").click(); // Simulate button click
         }
       });
 
+      // Handle movie dropdown selection
       $("#suggestedMovies").on("change", () => {
         const selectedMovie = $("#suggestedMovies").val();
         if (selectedMovie) {
-          $("#movieInput").val(selectedMovie);
-          $("#searchBtn").click();
+          $("#movieInput").val(selectedMovie); // Set input value
+          $("#searchBtn").click(); // Search
         } else {
-          $("#movieInput").val("");
-          $("#movieCards").empty();
-          this.showDescription();
+          $("#movieInput").val(""); // Clear input
+          $("#movieCards").empty(); // Clear results
+          this.showDescription(); // Show default view
         }
       });
     });
   }
 }
 
-// Initialize the movie app
+// Launch the app
 new MovieApp();

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Character encoding and viewport settings for responsive design -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Page title displayed in the browser tab -->
+    <title>Film Finder | About</title>
+
+    <!-- Google Fonts for custom typography -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap 5 CSS for styling and layout -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS stylesheet -->
+    <link rel="stylesheet" href="./styles.css" />
+
+    <!-- jQuery library for easier DOM manipulation -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Custom JavaScript, deferred to load after HTML parsing -->
+    <script src="./script.js" defer></script>
+  </head>
+
+  <body>
+    <main class="container">
+      <!-- Main heading with ARIA label for accessibility -->
+      <a href="./index.html"
+        ><h1
+          class="text-center mb-1 pt-3"
+          aria-label="Movie Lookup Application"
+        >
+          Film Finder
+        </h1></a
+      >
+
+      <section id="pageDescription" class="container mt-5 text-center">
+        <!-- Page Heading -->
+        <h1 class="mb-4">About This Application</h1>
+
+        <!-- Application Description -->
+        <div class="mb-5">
+          <p class="lead">
+            <strong>Film Finder</strong> is a dynamic web application designed
+            to help users easily discover movie information by integrating with
+            the OMDb API. Users can input a movie title or choose from suggested
+            titles to view detailed data like posters, ratings, genres, and plot
+            summaries. The project showcases dynamic features, API interaction,
+            and modern web design practices using HTML, CSS, JavaScript, jQuery,
+            and Bootstrap.
+          </p>
+        </div>
+
+        <!-- Creator Info -->
+        <div class="mb-5">
+          <h3>Created By</h3>
+          <p><strong>Sean Millard</strong></p>
+          <p>
+            Email:
+            <a href="mailto:smillard4@student.holmesglen.edu.au"
+              >smillard4@student.holmesglen.edu.au</a
+            >
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer with credits and links, including accessibility attributes -->
+    <footer>
+      Data provided by
+      <a
+        href="https://www.omdbapi.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        >OMDb API</a
+      >
+      | Powered by
+      <a
+        href="https://getbootstrap.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Bootstrap 5</a
+      >
+      and
+      <a href="https://jquery.com/" target="_blank" rel="noopener noreferrer"
+        >jQuery</a
+      >
+      | Background photo by
+      <a
+        href="https://unsplash.com/@harryprabowo"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Harry Prabowo on Unsplash</a
+      >
+    </footer>
+  </body>
+</html>
