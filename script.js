@@ -19,34 +19,32 @@ class Movie {
     return `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}`;
   }
 
-  fetchMovies(callback, errorCallback) {
-    $.ajax({
-      url: this.searchUrl,
-      method: "GET",
-      success: (response) => {
-        if (response.Response === "True") {
-          callback(response.Search.slice(0, 15));
-        } else {
-          errorCallback("No results found.");
-        }
-      },
-      error: () => errorCallback("Error fetching movie data."),
-    });
+  async fetchMovies() {
+    try {
+      const response = await fetch(this.searchUrl);
+      const data = await response.json();
+      if (data.Response === "True") {
+        return data.Search.slice(0, 15);
+      } else {
+        throw new Error("No results found.");
+      }
+    } catch (error) {
+      throw new Error("Error fetching movie data.");
+    }
   }
 
-  static fetchDetails(imdbID, callback, errorCallback) {
-    $.ajax({
-      url: Movie.getDetailsUrl(imdbID),
-      method: "GET",
-      success: (response) => {
-        if (response.Response === "True") {
-          callback(response);
-        } else {
-          errorCallback(response.Error || "No details found.");
-        }
-      },
-      error: () => errorCallback("Error fetching movie details."),
-    });
+  static async fetchDetails(imdbID) {
+    try {
+      const response = await fetch(Movie.getDetailsUrl(imdbID));
+      const data = await response.json();
+      if (data.Response === "True") {
+        return data;
+      } else {
+        throw new Error(data.Error || "No details found.");
+      }
+    } catch {
+      throw new Error("Error fetching movie details.");
+    }
   }
 }
 
@@ -136,7 +134,6 @@ class MovieApp {
       "Mad Max: Fury Road",
       "The Wolf of Wall Street",
     ];
-
     this.maxDisplay = 9;
 
     this.setupEventListeners();
@@ -171,7 +168,7 @@ class MovieApp {
     $("#pageDescription").fadeOut(400);
   }
 
-  searchAndDisplayMovies(title) {
+  async searchAndDisplayMovies(title) {
     if (!title) {
       alert("Please enter a movie title.");
       return;
@@ -182,94 +179,87 @@ class MovieApp {
     this.hideDescription();
 
     const movieSearch = new Movie(title);
-    movieSearch.fetchMovies(
-      (movies) => this.displayMovies(movies),
-      (errorMessage) => {
-        $("#movieCards").html(
-          `<p class="text-center text-danger" role="alert">${errorMessage}</p>`
-        );
-        $("#loading").hide();
-        this.showDescription();
-      }
-    );
+    try {
+      const movies = await movieSearch.fetchMovies();
+      await this.displayMovies(movies);
+    } catch (error) {
+      $("#movieCards").html(
+        `<p class="text-center text-danger" role="alert">${error.message}</p>`
+      );
+      $("#loading").hide();
+      this.showDescription();
+    }
   }
 
-  displayMovies(movies) {
+  async displayMovies(movies) {
     $("#movieCards").empty();
     $("#loading").show();
 
-    const detailPromises = movies.map((movie) =>
-      $.ajax({
-        url: Movie.getDetailsUrl(movie.imdbID),
-        method: "GET",
-      })
-        .then((detail) => (detail.Poster === "N/A" ? null : detail))
-        .catch(() => null)
+    const detailPromises = movies.map(async (movie) => {
+      try {
+        const detail = await Movie.fetchDetails(movie.imdbID);
+        return detail.Poster === "N/A" ? null : detail;
+      } catch {
+        return null;
+      }
+    });
+
+    const results = await Promise.all(detailPromises);
+    const validDetails = results.filter((d) => d !== null);
+
+    if (validDetails.length === 0) {
+      $("#movieCards").html(
+        `<p class="text-center text-warning mt-3" role="alert">No valid posters found.</p>`
+      );
+      $("#loading").hide();
+      this.showDescription();
+      return;
+    }
+
+    const imageLoadPromises = validDetails.map(
+      (detail) =>
+        new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve(detail);
+          img.onerror = () => resolve(null);
+          img.src = detail.Poster;
+        })
     );
 
-    $.when(...detailPromises).done((...results) => {
-      const detailsArray = Array.isArray(results[0])
-        ? results.map((r) => r[0])
-        : results;
+    const loadedDetails = await Promise.all(imageLoadPromises);
+    const loadedValidDetails = loadedDetails.filter((d) => d !== null);
 
-      const validDetails = detailsArray.filter((d) => d !== null);
-
-      if (validDetails.length === 0) {
-        $("#movieCards").html(
-          `<p class="text-center text-warning mt-3" role="alert">No valid posters found.</p>`
-        );
-        $("#loading").hide();
-        this.showDescription();
-        return;
-      }
-
-      const imageLoadPromises = validDetails.map(
-        (detail) =>
-          new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => resolve(detail);
-            img.onerror = () => resolve(null);
-            img.src = detail.Poster;
-          })
+    if (loadedValidDetails.length === 0) {
+      $("#movieCards").html(
+        `<p class="text-center text-warning mt-3" role="alert">No valid posters could be loaded.</p>`
       );
+      $("#loading").hide();
+      this.showDescription();
+      return;
+    }
 
-      Promise.all(imageLoadPromises).then((loadedDetails) => {
-        const loadedValidDetails = loadedDetails.filter((d) => d !== null);
-
-        if (loadedValidDetails.length === 0) {
-          $("#movieCards").html(
-            `<p class="text-center text-warning mt-3" role="alert">No valid posters could be loaded.</p>`
-          );
-          $("#loading").hide();
-          this.showDescription();
-          return;
-        }
-
-        const toDisplay = loadedValidDetails.slice(0, this.maxDisplay);
-        toDisplay.forEach((detail) => {
-          const card = new MovieCard(detail).render();
-          $("#movieCards").append(card);
-        });
-
-        if (toDisplay.length < this.maxDisplay) {
-          $("#movieCards").append(
-            `<p class="text-center text-warning mt-3" role="alert">Only ${toDisplay.length} movie(s) could be displayed.</p>`
-          );
-        }
-
-        // Animate movie cards using anime.js
-        anime({
-          targets: ".anime-card",
-          translateY: [100, 0],
-          opacity: [0, 1],
-          duration: 800,
-          delay: anime.stagger(100),
-          easing: "easeOutExpo",
-        });
-
-        $("#loading").hide();
-      });
+    const toDisplay = loadedValidDetails.slice(0, this.maxDisplay);
+    toDisplay.forEach((detail) => {
+      const card = new MovieCard(detail).render();
+      $("#movieCards").append(card);
     });
+
+    if (toDisplay.length < this.maxDisplay) {
+      $("#movieCards").append(
+        `<p class="text-center text-warning mt-3" role="alert">Only ${toDisplay.length} movie(s) could be displayed.</p>`
+      );
+    }
+
+    anime({
+      targets: ".anime-card",
+      translateY: [100, 0],
+      opacity: [0, 1],
+      duration: 800,
+      delay: anime.stagger(100),
+      easing: "easeOutExpo",
+    });
+
+    $("#loading").hide();
   }
 
   setupEventListeners() {
@@ -306,3 +296,18 @@ class MovieApp {
 
 // Launch app
 new MovieApp();
+
+// Contact form validation and success message
+$(document).ready(() => {
+  $("#contactForm").on("submit", function (e) {
+    e.preventDefault();
+    const form = this;
+    if (!form.checkValidity()) {
+      form.classList.add("was-validated");
+    } else {
+      $("#formSuccess").removeClass("d-none");
+      form.reset();
+      form.classList.remove("was-validated");
+    }
+  });
+});

@@ -38,6 +38,23 @@ a {
   flex-shrink: 0; /* Prevent shrinking */
 }
 
+/* Fix for Bootstrap's dark navbar background */
+.navbar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+}
+.navbar-dark .nav-link {
+  color: #0d6efd !important;
+  transition: color 0.3s ease;
+}
+
+.navbar-dark .nav-link:hover,
+.navbar-dark .nav-link:focus {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
 /* Centered description section */
 #pageDescription {
   flex-grow: 1;
@@ -48,7 +65,6 @@ a {
   text-align: center;
   gap: 1rem; /* Optional: space between text and button */
 }
-
 
 /* Styled text block inside description */
 #pageDescription {
@@ -176,6 +192,17 @@ select.form-select {
   color: #fff;
 }
 
+#contactCard {
+  background-color: rgba(255, 255, 255, 0.9);
+  max-width: 600px;
+  width: 100%;
+}
+
+#contactCard h2,
+label {
+  color: #222;
+}
+
 /* Footer styles */
 footer {
   position: fixed;
@@ -186,7 +213,7 @@ footer {
   color: #ddd;
   font-size: 0.85rem;
   text-align: center;
-  padding: 0.75rem 1rem;
+  padding: 0.25rem 0.5rem;
   font-family: "Cinzel", serif;
   z-index: 1000;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5);
