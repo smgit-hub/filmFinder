@@ -1,49 +1,52 @@
-/* Ensure html and body cover full viewport and remove margin */
+/* Ensure html and body fill viewport and remove default margin */
 html,
 body {
   height: 100%;
   margin: 0;
 }
 
-/* Main body styling */
+/* Body styling with background and flex layout */
 body {
-  font-family: "Cinzel", serif; /* Custom font */
+  font-family: "Cinzel", serif;
   background-image: url("./images/harry-prabowo-hNmyXSH5g9Q-unsplash.jpg");
-  background-size: cover; /* Full background */
-  background-position: center; /* Centered */
-  background-attachment: fixed; /* Doesn't scroll */
-  color: #fff; /* White text */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #fff;
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Full height */
+  min-height: 100vh;
 }
 
+/* Remove underline from links */
 a {
   text-decoration: none;
 }
 
-/* Central container for page content */
+/* Container limits width and grows with content */
 .container {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 900px; /* Restrict width */
+  max-width: 900px;
   flex-grow: 1;
-  padding-bottom: 3.5rem; /* Room for footer */
+  padding-bottom: 3.5rem; /* space for footer */
 }
 
-/* Top input area */
+/* Input area padding and no shrink */
 .input-area {
   padding-top: 2rem;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 
-/* Fix for Bootstrap's dark navbar background */
+/* Navbar appearance and z-index */
 .navbar {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   z-index: 1050;
 }
+
+/* Navbar link color and hover effect */
 .navbar-dark .nav-link {
   color: #0d6efd !important;
   transition: color 0.3s ease;
@@ -55,32 +58,29 @@ a {
   text-decoration: underline;
 }
 
-/* Centered description section */
+/* Centered page description section with background */
 #pageDescription {
   flex-grow: 1;
   display: flex;
-  flex-direction: column; /* Stack children vertically */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 1rem; /* Optional: space between text and button */
-}
+  gap: 1rem;
 
-/* Styled text block inside description */
-#pageDescription {
-  background-color: rgba(255, 255, 255, 0.9); /* White box */
+  background-color: rgba(255, 255, 255, 0.9);
   color: #222;
   border-radius: 10px;
   padding: 1rem 2rem;
   margin-top: 2.5rem;
 }
 
-/* Space above results */
+/* Margin above movie results */
 #movieCards {
   margin-top: 1rem;
 }
 
-/* Movie card design */
+/* Movie card styling */
 .movie-card {
   width: 18rem;
   height: 100%;
@@ -90,14 +90,13 @@ a {
   outline: none;
   display: flex;
   flex-direction: column;
-  background-color: rgba(0, 0, 0, 0.7); /* Transparent black */
-  border: none;
+  background-color: rgba(0, 0, 0, 0.7);
   color: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   border-radius: 0.25rem;
 }
 
-/* Poster styling */
+/* Poster image size and transition */
 .card-img-top {
   height: 400px;
   object-fit: cover;
@@ -106,13 +105,13 @@ a {
   border-radius: 0.25rem 0.25rem 0 0;
 }
 
-/* Zoom image on hover or focus */
+/* Zoom poster on hover or focus */
 .movie-card:hover .card-img-top,
 .movie-card:focus .card-img-top {
   transform: scale(1.1);
 }
 
-/* Overlay for movie plot */
+/* Plot overlay hidden by default */
 .plot-overlay {
   position: absolute;
   top: 0;
@@ -121,7 +120,7 @@ a {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.85);
   color: white;
-  opacity: 0; /* Hidden initially */
+  opacity: 0;
   transition: opacity 0.3s ease;
   padding: 1rem;
   overflow-y: auto;
@@ -135,7 +134,7 @@ a {
   border-radius: 0.25rem 0.25rem 0 0;
 }
 
-/* Scrollbar style for Chrome/Safari */
+/* Scrollbar styling for webkit browsers */
 .plot-overlay::-webkit-scrollbar {
   width: 6px;
 }
@@ -150,7 +149,7 @@ a {
   opacity: 1;
 }
 
-/* Body of the card (title + rating) */
+/* Card body styling */
 .card-body {
   padding: 0.5rem 0.75rem;
   flex-shrink: 0;
@@ -159,7 +158,7 @@ a {
   justify-content: center;
 }
 
-/* Movie title */
+/* Movie title truncation */
 .card-title {
   font-size: 1rem;
   margin-bottom: 0.25rem;
@@ -169,20 +168,20 @@ a {
   color: #fff;
 }
 
-/* Movie rating text */
+/* Rating text color */
 .card-text {
   font-size: 0.85rem;
   margin-bottom: 0;
   color: #ddd;
 }
 
-/* Accessibility: show outline on focus */
+/* Focus outline for accessibility */
 .movie-card:focus {
-  box-shadow: 0 0 0 3px #0d6efd; /* Blue border */
+  box-shadow: 0 0 0 3px #0d6efd;
   border-radius: 0.25rem;
 }
 
-/* Dropdown fix for black text */
+/* Dropdown text color fix */
 select.form-select {
   color: #000;
 }
@@ -192,18 +191,19 @@ select.form-select {
   color: #fff;
 }
 
+/* Contact card styling */
 #contactCard {
   background-color: rgba(255, 255, 255, 0.9);
   max-width: 600px;
   width: 100%;
 }
 
-#contactCard h2,
+#contactCard h1,
 label {
   color: #222;
 }
 
-/* Footer styles */
+/* Fixed footer styling */
 footer {
   position: fixed;
   bottom: 0;
@@ -219,15 +219,23 @@ footer {
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5);
 }
 
-/* Footer links */
+/* Footer link styling */
 footer a {
   color: #ddd;
   text-decoration: underline;
 }
 
-/* Footer link hover and focus state */
 footer a:hover,
 footer a:focus {
   color: #fff;
   text-decoration: none;
+}
+
+/* Responsive navbar brand centering */
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+  }
 }
