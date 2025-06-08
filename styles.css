@@ -8,7 +8,7 @@ body {
 /* Body styling with background and flex layout */
 body {
   font-family: "Cinzel", serif;
-  background-image: url("./images/harry-prabowo-hNmyXSH5g9Q-unsplash.jpg");
+  background-image: url("./images/background.jpg");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
