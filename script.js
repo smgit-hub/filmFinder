@@ -1,7 +1,7 @@
 /**
  * Movie Search and Display Application
  *
- * This script implements the core functionality of a movie search web application
+ * This script implements the core functionality of the movie search web application
  * that interacts with the OMDb API. It allows searching movies by title, fetching detailed
  * movie information, rendering movie cards with posters and ratings, and handling UI interactions.
  *
