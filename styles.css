@@ -41,7 +41,7 @@ a {
 
 /* Navbar appearance and z-index */
 .navbar {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   z-index: 1050;
   position: relative;
@@ -55,7 +55,7 @@ a {
 
 .navbar-dark .nav-link:hover,
 .navbar-dark .nav-link:focus {
-  color: #ffffff !important;
+  color: #fff !important;
 }
 
 /* Centered brand styling */
@@ -98,7 +98,7 @@ a {
   display: flex;
   flex-direction: column;
   background-color: rgba(0, 0, 0, 0.7);
-  color: #ffffff;
+  color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   border-radius: 0.25rem;
 }
@@ -126,7 +126,7 @@ a {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.85);
-  color: #ffffff;
+  color: #fff;
   opacity: 0;
   transition: opacity 0.3s ease;
   padding: 1rem;
@@ -136,18 +136,7 @@ a {
   align-items: center;
   justify-content: center;
   text-align: center;
-  scrollbar-width: thin;
-  scrollbar-color: #ccc transparent;
   border-radius: 0.25rem 0.25rem 0 0;
-}
-
-/* Scrollbar styling for webkit browsers */
-.plot-overlay::-webkit-scrollbar {
-  width: 6px;
-}
-.plot-overlay::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 4px;
 }
 
 /* Show overlay on hover or focus */
@@ -186,16 +175,6 @@ a {
 .movie-card:focus {
   box-shadow: 0 0 0 3px #0d6efd;
   border-radius: 0.25rem;
-}
-
-/* Dropdown text color fix */
-select.form-select {
-  color: #000;
-}
-
-/* Spinner color */
-#loading {
-  color: #fff;
 }
 
 /* Contact card styling */
