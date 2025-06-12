@@ -15,55 +15,37 @@
  * - Anime.js for animations.
  */
 
-// OMDb API Key
+// OMDb API key used for fetching movie data
 const API_KEY = "78e0df47";
 
 /**
  * Represents a movie search and fetch utility.
- *
- * Handles communication with the OMDb API to search movies by title and fetch detailed
- * information by IMDb ID.
  */
 class Movie {
-  /**
-   * Create a Movie instance.
-   * @param {string} title - The movie title to search for.
-   */
   constructor(title) {
-    this.title = title;
+    this.title = title; // Movie title to search
   }
 
-  /**
-   * Construct the search URL for the OMDb API using the movie title.
-   * @returns {string} The full search URL.
-   */
+  // Returns the full OMDb API search URL for the title
   get searchUrl() {
     return `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(
       this.title.trim()
     )}`;
   }
 
-  /**
-   * Generate the details URL for a specific movie by IMDb ID.
-   * @param {string} imdbID - The IMDb ID of the movie.
-   * @returns {string} The full details URL.
-   */
+  // Returns the full OMDb API URL to fetch detailed movie info by IMDb ID
   static getDetailsUrl(imdbID) {
     return `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}`;
   }
 
-  /**
-   * Fetch a list of movies matching the title from the OMDb API.
-   * @async
-   * @throws Will throw an error if no results are found or the fetch fails.
-   * @returns {Promise<Array>} An array of movie search results (up to 15).
-   */
+  // Fetch up to 15 movies matching the title
   async fetchMovies() {
     try {
-      const response = await fetch(this.searchUrl);
-      const data = await response.json();
+      const response = await fetch(this.searchUrl); // Fetch search results
+      const data = await response.json(); // Parse JSON
+
       if (data.Response === "True") {
-        return data.Search.slice(0, 15);
+        return data.Search.slice(0, 15); // Return first 15 movies
       } else {
         throw new Error("No results found.");
       }
@@ -72,17 +54,12 @@ class Movie {
     }
   }
 
-  /**
-   * Fetch detailed information about a movie by its IMDb ID.
-   * @async
-   * @param {string} imdbID - The IMDb ID of the movie.
-   * @throws Will throw an error if details are not found or the fetch fails.
-   * @returns {Promise<Object>} The detailed movie data object.
-   */
+  // Fetch full details of a movie by IMDb ID
   static async fetchDetails(imdbID) {
     try {
       const response = await fetch(Movie.getDetailsUrl(imdbID));
       const data = await response.json();
+
       if (data.Response === "True") {
         return data;
       } else {
@@ -95,33 +72,23 @@ class Movie {
 }
 
 /**
- * Class responsible for rendering a movie card element.
+ * Class responsible for rendering a single movie card in the UI.
  */
 class MovieCard {
-  /**
-   * Create a MovieCard instance.
-   * @param {Object} details - The detailed movie information.
-   */
   constructor(details) {
-    this.details = details;
+    this.details = details; // Detailed movie info
   }
 
-  /**
-   * Determine the color for the IMDb rating text based on the rating value.
-   * @returns {string} A color hex code representing the rating category.
-   */
+  // Determines the color of the IMDb rating text based on score
   getRatingColor() {
     const rating = parseFloat(this.details.imdbRating);
-    if (isNaN(rating)) return "#888"; // Default gray for no rating
-    if (rating >= 8.0) return "#4CAF50"; // Green for high ratings
-    if (rating >= 6.0) return "#FF9800"; // Orange for medium ratings
-    return "#F44336"; // Red for low ratings
+    if (isNaN(rating)) return "#888"; // Gray if no rating
+    if (rating >= 8.0) return "#4CAF50"; // Green for great
+    if (rating >= 6.0) return "#FF9800"; // Orange for average
+    return "#F44336"; // Red for low
   }
 
-  /**
-   * Create and return a jQuery element representing the movie card.
-   * @returns {jQuery} The jQuery object containing the movie card HTML.
-   */
+  // Renders the movie card as a jQuery object
   render() {
     const card = $(`
        <div class="col-md-4 mb-4 d-flex justify-content-center anime-card">
@@ -156,18 +123,11 @@ class MovieCard {
 }
 
 /**
- * Main application class that manages the movie search UI and application logic.
+ * Main class for managing the entire movie app.
  */
 class MovieApp {
-  /**
-   * Initialize the movie application.
-   * Sets up event listeners, suggested movies dropdown, and initial UI description.
-   */
   constructor() {
-    /**
-     * Predefined pool of movie suggestions to display in dropdown.
-     * @type {string[]}
-     */
+    // Pool of suggested movie titles
     this.movieSuggestionsPool = [
       "Inception",
       "The Matrix",
@@ -201,22 +161,15 @@ class MovieApp {
       "The Wolf of Wall Street",
     ];
 
-    /**
-     * Maximum number of movie cards to display.
-     * @type {number}
-     */
-    this.maxDisplay = 9;
+    this.maxDisplay = 9; // Number of movies to display per search
 
+    // Initialize UI event listeners, dropdown, and description
     this.setupEventListeners();
     this.populateSuggestedMovies();
     this.showDescription();
   }
 
-  /**
-   * Shuffle an array and return a new shuffled array.
-   * @param {Array} array - The array to shuffle.
-   * @returns {Array} A new array with elements shuffled randomly.
-   */
+  // Shuffles an array randomly
   shuffleArray(array) {
     const arr = array.slice();
     for (let i = arr.length - 1; i > 0; i--) {
@@ -226,9 +179,7 @@ class MovieApp {
     return arr;
   }
 
-  /**
-   * Populate the suggested movies dropdown with a shuffled subset of movies.
-   */
+  // Populates dropdown with random movie suggestions
   populateSuggestedMovies() {
     const shuffled = this.shuffleArray(this.movieSuggestionsPool);
     const suggestions = shuffled.slice(0, 10);
@@ -239,57 +190,47 @@ class MovieApp {
     });
   }
 
-  /**
-   * Display the page description section.
-   */
+  // Shows the description block
   showDescription() {
     $("#pageDescription").fadeIn(400);
   }
 
-  /**
-   * Hide the page description section.
-   */
+  // Hides the description block
   hideDescription() {
     $("#pageDescription").fadeOut(400);
   }
 
-  /**
-   * Search movies by title and display the results as movie cards.
-   * @async
-   * @param {string} title - The movie title to search for.
-   */
+  // Searches for movies by title and displays results
   async searchAndDisplayMovies(title) {
     if (!title) {
       alert("Please enter a movie title.");
       return;
     }
 
-    $("#movieCards").empty();
-    $("#loading").show();
-    this.hideDescription();
+    $("#movieCards").empty(); // Clear previous results
+    $("#loading").show(); // Show loader
+    this.hideDescription(); // Hide description during search
 
     const movieSearch = new Movie(title);
     try {
-      const movies = await movieSearch.fetchMovies();
-      await this.displayMovies(movies);
+      const movies = await movieSearch.fetchMovies(); // Fetch matching titles
+      await this.displayMovies(movies); // Display result cards
     } catch (error) {
+      // Show error message
       $("#movieCards").html(
         `<p class="text-center text-danger" role="alert">${error.message}</p>`
       );
       $("#loading").hide();
-      this.showDescription();
+      this.showDescription(); // Show description if no results
     }
   }
 
-  /**
-   * Fetch details for each movie, validate poster images, and render movie cards.
-   * @async
-   * @param {Array} movies - Array of movie search result objects.
-   */
+  // Displays movie cards by fetching details and filtering invalid entries
   async displayMovies(movies) {
     $("#movieCards").empty();
     $("#loading").show();
 
+    // Fetch full details for each movie
     const detailPromises = movies.map(async (movie) => {
       try {
         const detail = await Movie.fetchDetails(movie.imdbID);
@@ -302,6 +243,7 @@ class MovieApp {
     const results = await Promise.all(detailPromises);
     const validDetails = results.filter((d) => d !== null);
 
+    // If no valid posters found
     if (validDetails.length === 0) {
       $("#movieCards").html(
         `<p class="text-center text-warning mt-3" role="alert">No valid posters found.</p>`
@@ -311,7 +253,7 @@ class MovieApp {
       return;
     }
 
-    // Verify image loading success for each poster
+    // Validate that poster images actually load
     const imageLoadPromises = validDetails.map(
       (detail) =>
         new Promise((resolve) => {
@@ -334,19 +276,21 @@ class MovieApp {
       return;
     }
 
+    // Display up to maxDisplay number of movie cards
     const toDisplay = loadedValidDetails.slice(0, this.maxDisplay);
     toDisplay.forEach((detail) => {
       const card = new MovieCard(detail).render();
       $("#movieCards").append(card);
     });
 
+    // Show message if not all movies could be shown
     if (toDisplay.length < this.maxDisplay) {
       $("#movieCards").append(
         `<p class="text-center text-warning mt-3" role="alert">Only ${toDisplay.length} movie(s) could be displayed.</p>`
       );
     }
 
-    // Animate cards on display
+    // Animate movie cards into view using Anime.js
     anime({
       targets: ".anime-card",
       translateY: [100, 0],
@@ -356,33 +300,31 @@ class MovieApp {
       easing: "easeOutExpo",
     });
 
-    $("#loading").hide();
+    $("#loading").hide(); // Hide loader after render
   }
 
-  /**
-   * Setup event listeners for UI elements: search input, buttons, dropdown.
-   */
+  // Setup all event listeners on page load
   setupEventListeners() {
     $(document).ready(() => {
-      // Repopulate suggestions on focus/click
+      // Regenerate suggestions on dropdown focus or click
       $("#suggestedMovies").on("focus click", () =>
         this.populateSuggestedMovies()
       );
 
-      // Search button click
+      // On clicking search button
       $("#searchBtn").on("click", () => {
         const title = $("#movieInput").val().trim();
         this.searchAndDisplayMovies(title);
       });
 
-      // Enter key triggers search
+      // Pressing Enter in input triggers search
       $("#movieInput").on("keydown", (event) => {
         if (event.key === "Enter") {
           $("#searchBtn").click();
         }
       });
 
-      // Suggested movie selected from dropdown
+      // When a suggested movie is selected from dropdown
       $("#suggestedMovies").on("change", () => {
         const selectedMovie = $("#suggestedMovies").val();
         if (selectedMovie) {
@@ -398,42 +340,64 @@ class MovieApp {
   }
 }
 
-// Initialize the movie app instance
+// Initialize and run the movie application
 new MovieApp();
 
 /**
- * Contact Form Handling Script
+ * Contact Form Validation
  *
- * This script handles the validation and submission behavior of a contact form.
- * It prevents default form submission, validates inputs using HTML5 validation,
- * displays a success message on valid submission, and resets the form.
- *
- * Dependencies:
- * - jQuery for DOM manipulation and event handling.
+ * Validates name, email, and message inputs before submission.
  */
-$(document).ready(() => {
-  /**
-   * Handle contact form submission.
-   * Validates the form and shows a success message if valid.
-   */
-  $("#contactForm").on("submit", function (e) {
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("contactForm");
+  const nameInput = document.getElementById("name");
+  const emailInput = document.getElementById("email");
+  const messageInput = document.getElementById("message");
+  const successMsg = document.getElementById("formSuccess");
+
+  form.addEventListener("submit", function (e) {
     e.preventDefault();
-    const form = this;
-    if (!form.checkValidity()) {
-      // Show validation feedback
-      form.classList.add("was-validated");
+    let valid = true;
+
+    // Validate name (letters, spaces, hyphens, 2+ chars)
+    const namePattern = /^[A-Za-z\s\-]{2,}$/;
+    if (!namePattern.test(nameInput.value.trim())) {
+      nameInput.classList.add("is-invalid");
+      valid = false;
     } else {
-      // Display success message and reset form
-      $("#formSuccess").removeClass("d-none");
+      nameInput.classList.remove("is-invalid");
+    }
+
+    // Validate email format
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(emailInput.value.trim())) {
+      emailInput.classList.add("is-invalid");
+      valid = false;
+    } else {
+      emailInput.classList.remove("is-invalid");
+    }
+
+    // Validate that message has at least 5 words
+    const wordCount = messageInput.value.trim().split(/\s+/).length;
+    if (wordCount < 5) {
+      messageInput.classList.add("is-invalid");
+      valid = false;
+    } else {
+      messageInput.classList.remove("is-invalid");
+    }
+
+    // Show success message or keep invalid alerts
+    if (valid) {
+      successMsg.classList.remove("d-none");
       form.reset();
-      form.classList.remove("was-validated");
+    } else {
+      successMsg.classList.add("d-none");
     }
   });
 });
 
 /**
- * Animate page headings on DOM content loaded event.
- * Uses Anime.js for smooth entrance animations.
+ * Animate page headings when the DOM content is fully loaded.
  */
 document.addEventListener("DOMContentLoaded", () => {
   anime({
